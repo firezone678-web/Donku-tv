@@ -246,10 +246,11 @@
             });
         }
 
-        // Multi-proxy fallback fetch mechanism
+        // Multiple Proxy Fallback Chain
         const proxySources = [
-            `https://corsproxy.io/?${encodeURIComponent(M3U_RAW_URL)}`,
             `https://api.allorigins.win/raw?url=${encodeURIComponent(M3U_RAW_URL)}`,
+            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(M3U_RAW_URL)}`,
+            `https://corsproxy.io/?${encodeURIComponent(M3U_RAW_URL)}`,
             M3U_RAW_URL
         ];
 
@@ -259,7 +260,7 @@
                     const response = await fetch(url);
                     if (response.ok) {
                         const data = await response.text();
-                        if (data && data.includes('#EXTM3U')) {
+                        if (data && data.includes('#EXTINF')) {
                             allChannels = parseM3U(data);
                             status.innerText = `Total ${allChannels.length} Channels Available`;
                             renderChannels(allChannels);
