@@ -158,7 +158,7 @@
     <div class="grid-container" id="channel-grid"></div>
 
     <script>
-        const M3U_RAW_URL = 'http://tahmidx.tech/m3u/live-tv.m3u';
+        const M3U_RAW_URL = './live-tv.m3u';
         const video = document.getElementById('main-player');
         const grid = document.getElementById('channel-grid');
         const status = document.getElementById('status');
@@ -246,12 +246,9 @@
             });
         }
 
-        // Multiple Proxy Fallback Chain
         const proxySources = [
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(M3U_RAW_URL)}`,
-            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(M3U_RAW_URL)}`,
-            `https://corsproxy.io/?${encodeURIComponent(M3U_RAW_URL)}`,
-            M3U_RAW_URL
+            M3U_RAW_URL,
+            `https://api.allorigins.win/raw?url=${encodeURIComponent('http://tahmidx.tech/m3u/live-tv.m3u')}`
         ];
 
         async function fetchPlaylist() {
@@ -260,7 +257,7 @@
                     const response = await fetch(url);
                     if (response.ok) {
                         const data = await response.text();
-                        if (data && data.includes('#EXTINF')) {
+                        if (data && (data.includes('#EXTINF') || data.includes('#EXTM3U'))) {
                             allChannels = parseM3U(data);
                             status.innerText = `Total ${allChannels.length} Channels Available`;
                             renderChannels(allChannels);
@@ -274,7 +271,7 @@
                     console.warn(`Failed fetching from: ${url}`, e);
                 }
             }
-            status.innerText = "Failed to load M3U Playlist. Please check CORS or Stream Server.";
+            status.innerText = "Failed to load M3U Playlist. Please check connection.";
         }
 
         fetchPlaylist();
